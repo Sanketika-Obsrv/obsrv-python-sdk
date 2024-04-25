@@ -130,7 +130,6 @@ class SourceConnector:
         # TODO: Move this to separate method
         ctx.building_block = config.find("building-block", None)
         ctx.env = config.find("env", None)
-
         connector_config = SourceConnector.get_connector_config(connector_instance)
         if 'is_encrypted' in connector_config and connector_config['is_encrypted']:
             encryption_util = EncryptionUtil(config.find("obsrv_encryption_key"))

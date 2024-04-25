@@ -26,6 +26,7 @@ class TestSource(ISourceConnector):
         yield df
 
         df1 = sc.read.format("json").load('tests/sample_data/nyt_data_100.json')
+
         yield df1
 
     def get_spark_conf(self, connector_config) -> SparkConf:
