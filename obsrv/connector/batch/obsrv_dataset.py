@@ -64,8 +64,6 @@ class ObsrvDataset:
         kafka_servers = config.find("kafka.bootstrap-servers", "localhost:9092")
         compression_type = config.find("kafka.producer.compression", "snappy")
 
-        logger.info("saving valid events to kafka topic `%s` on `%s`", topic, kafka_servers)
-
         self.valid_events.selectExpr("to_json(struct(*)) AS value").write.format("kafka") \
             .option("kafka.bootstrap.servers", kafka_servers) \
             .option("kafka.compression.type", compression_type) \

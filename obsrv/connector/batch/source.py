@@ -11,6 +11,7 @@ from obsrv.connector.registry import ConnectorRegistry
 from obsrv.connector.batch.obsrv_dataset import ObsrvDataset
 
 from abc import ABC, abstractmethod
+import json
 
 logger = LoggerController(__name__)
 
@@ -76,25 +77,16 @@ class SourceConnector:
         results = connector.execute(ctx=ctx, connector_config=connector_config, sc=sc, metrics_collector=metrics_collector)
 
         if isinstance(results, DataFrame):
-            logger.info("processing single dataframe with %s records", results.count())
             res = SourceConnector.process_result(results, ctx, config)
             valid_records += res[0]
             failed_records += res[1]
             framework_exec_time += res[2]
         else:
-        # if isinstance(results, Iterator):
-            logger.info("processing iterator in process_connector")
             for result in results:
-                logger.info("processing dataframe from generator with %s records", result.count())
                 res = SourceConnector.process_result(result, ctx, config)
                 valid_records += res[0]
                 failed_records += res[1]
                 framework_exec_time += res[2]
-        # else:
-        #     res = SourceConnector.process_result(results, ctx, config)
-        #     valid_records += res[0]
-        #     failed_records += res[1]
-        #     framework_exec_time += res[2]
 
         return ExecutionMetric(
             totalRecords=valid_records + failed_records,
@@ -110,8 +102,6 @@ class SourceConnector:
             result = result.drop("obsrv_meta")
         dataset = ObsrvDataset(result)
         dataset.append_obsrv_meta(ctx)
-
-        logger.info("Total records post filter: %s", dataset.ds.count())
 
         dataset.filter_events(ctx, config)
         failed_events = dataset.invalid_events
@@ -140,10 +130,11 @@ class SourceConnector:
         # TODO: Move this to separate method
         ctx.building_block = config.find("building-block", None)
         ctx.env = config.find("env", None)
+
         connector_config = SourceConnector.get_connector_config(connector_instance)
         if 'is_encrypted' in connector_config and connector_config['is_encrypted']:
             encryption_util = EncryptionUtil(config.find("obsrv_encryption_key"))
-            connector_config = encryption_util.decrypt(connector_config)
+            connector_config = json.loads(encryption_util.decrypt(connector_config['connector_config']))
 
         metrics_collector = MetricsCollector(ctx)
         sc = SourceConnector.get_spark_session(ctx, connector_config, connector.get_spark_conf(connector_config))
@@ -161,7 +152,6 @@ class SourceConnector:
                 frameworkExecTime=execution_metric.frameworkExecTime + end_time - start_time,
                 totalExecTime=end_time - start_time
             )
-            logger.info("Metrics: %s", metric_event.to_json())
             metrics_collector.collect(metric=metric_event.to_json())
 
         except Exception as e:

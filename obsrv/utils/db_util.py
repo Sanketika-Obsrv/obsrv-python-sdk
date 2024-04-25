@@ -1,14 +1,11 @@
 import psycopg2
 import psycopg2.extras
-import logging
 
 class PostgresConnect:
     def __init__(self, config):
         self.config = config
-        self.logger = logging.getLogger(__name__)
 
     def connect(self):
-        # TODO: Read the values from config file
         db_host = self.config.get("host")
         db_port = self.config.get("port")
         db_user = self.config.get("user")

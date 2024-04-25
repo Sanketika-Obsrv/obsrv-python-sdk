@@ -1,10 +1,11 @@
 import yaml
 import os
 import psycopg2
+import json
 from obsrv.utils import EncryptionUtil
 
 def create_tables(config):
-    enc = EncryptionUtil(config['obsrv-encryption-key'])
+    enc = EncryptionUtil(config['obsrv_encryption_key'])
 
     datasets = """
         CREATE TABLE IF NOT EXISTS datasets (
@@ -88,18 +89,17 @@ def create_tables(config):
         ('test.1', '1', 'source', 'object', 'test_reader', 'test_reader', 'Python', 'Apache 2.0', 'ravi@obsrv.ai', 'http://localhost', 'Live', 'SYSTEM', 'SYSTEM', now());
     """
 
-    connector_config = {"type":"local"}
-    enc_config = enc.encrypt(connector_config)
+    connector_config = json.dumps({"type":"local"})
+    enc_config = {"is_encrypted": True, "connector_config": enc.encrypt(connector_config)}
 
-    enc
     ins_ci = """
         INSERT INTO connector_instances (id, dataset_id, connector_id, connector_type, connector_config, operations_config, status, connector_state, connector_stats, created_by, updated_by, created_date, updated_date, published_date) VALUES
-        ('test.new-york-taxi-data.1', 'new-york-taxi-data', 'test.1', 'source', '{"type":"local"}', '{}', 'Live', '{}', '{}', 'SYSTEM', 'SYSTEM', now(), now(), now()
+        ('test.new-york-taxi-data.1', 'new-york-taxi-data', 'test.1', 'source', %s, '{}', 'Live', '{}', '{}', 'SYSTEM', 'SYSTEM', now(), now(), now()
         );
     """
 
 
-    with open(os.path.join(os.path.dirname(__file__), 'config.yaml'), 'r') as config_file:
+    with open(os.path.join(os.path.dirname(__file__), 'config/config.yaml'), 'r') as config_file:
         config = yaml.safe_load(config_file)
         conn = psycopg2.connect(
             host=config['postgres']['host'],
@@ -110,12 +110,14 @@ def create_tables(config):
         )
 
         cur = conn.cursor()
+
         cur.execute(datasets)
         cur.execute(connector_registry)
         cur.execute(connector_instances)
         cur.execute(indexes)
         cur.execute(ins_ds)
         cur.execute(ins_cr)
-        cur.execute(ins_ci)
+        cur.execute(ins_ci, (json.dumps(enc_config),))
+
         conn.commit()
         conn.close()
