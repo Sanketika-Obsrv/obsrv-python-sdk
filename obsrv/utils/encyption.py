@@ -9,12 +9,12 @@ class EncryptionUtil:
         self.mode = AES.MODE_ECB
         self.block_size = AES.block_size
 
-    def encrypt(self, value):
+    def encrypt(self, value: str):
         cipher = self.algorithm.new(self.key, self.mode)
         padded_value = pad(value.encode('utf-8'), self.block_size)
         return b64encode(cipher.encrypt(padded_value)).decode('utf-8')
 
-    def decrypt(self, value):
+    def decrypt(self, value: str) -> str:
         cipher = self.algorithm.new(self.key, self.mode)
         decrypted_value64 = b64decode(value)
         decrypted_byte_value = unpad(cipher.decrypt(decrypted_value64), self.block_size)
