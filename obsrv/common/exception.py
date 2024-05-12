@@ -1,4 +1,4 @@
-from obsrv.models import ErrorData
+# from obsrv.models import ErrorData
 from obsrv.utils import LoggerController
 
 logger = LoggerController(__name__)

@@ -2,7 +2,6 @@ import operator
 from functools import reduce
 
 import yaml
-from yaml.loader import SafeLoader
 
 from .logger import LoggerController
 

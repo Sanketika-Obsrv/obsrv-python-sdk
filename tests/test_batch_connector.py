@@ -7,14 +7,11 @@ import yaml
 from kafka import KafkaConsumer, TopicPartition
 from pyspark.conf import SparkConf
 from pyspark.sql import DataFrame, SparkSession
-from testcontainers.kafka import KafkaContainer
-from testcontainers.postgres import PostgresContainer
 
 from obsrv.connector import ConnectorContext, MetricsCollector
 from obsrv.connector.batch import ISourceConnector, SourceConnector
 from obsrv.job.batch import get_base_conf
-from tests.batch_setup import setup_obsrv_database
-from tests.create_tables import create_tables
+from tests.batch_setup import setup_obsrv_database  # noqa
 
 
 class TestSource(ISourceConnector):

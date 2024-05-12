@@ -1,7 +1,7 @@
 import json
 import time
 from abc import ABC, abstractmethod
-from typing import Any, AnyStr, Dict, Iterator, final
+from typing import Any, AnyStr, Dict, final
 
 from pyspark.conf import SparkConf
 from pyspark.sql import DataFrame, SparkSession

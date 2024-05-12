@@ -5,7 +5,7 @@ import pytest
 import yaml
 
 from obsrv.connector.registry import ConnectorInstance, ConnectorRegistry
-from tests.batch_setup import setup_obsrv_database
+from tests.batch_setup import setup_obsrv_database  # noqa
 
 
 @pytest.mark.usefixtures("setup_obsrv_database")

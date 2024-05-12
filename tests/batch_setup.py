@@ -47,6 +47,5 @@ def setup_obsrv_database(request):
             os.remove(os.path.join(os.path.dirname(__file__), "config/config.yaml"))
         except FileNotFoundError:
             print("config file already removed")
-            pass
 
     request.addfinalizer(remove_container)
