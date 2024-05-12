@@ -1,8 +1,10 @@
 import json
 import time
+
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import lit, struct, to_json, from_json, length
-from pyspark.sql.types import StructType, StructField, StringType
+from pyspark.sql.functions import from_json, length, lit, struct, to_json
+from pyspark.sql.types import StringType, StructField, StructType
+
 from obsrv.utils import LoggerController
 
 logger = LoggerController(__name__)

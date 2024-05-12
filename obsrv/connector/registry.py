@@ -1,6 +1,7 @@
 import json
 from dataclasses import dataclass
 from typing import Optional
+
 from obsrv.common import ObsrvException
 from obsrv.models import ErrorData
 from obsrv.utils import PostgresConnect

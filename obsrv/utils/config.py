@@ -1,7 +1,9 @@
+import operator
+from functools import reduce
+
 import yaml
 from yaml.loader import SafeLoader
-from functools import reduce
-import operator
+
 from .logger import LoggerController
 
 logger = LoggerController(__name__)

@@ -1,24 +1,20 @@
 import os
 import unittest
-import yaml
-import pytest
 from typing import Any, Dict
-from testcontainers.postgres import PostgresContainer
-from testcontainers.kafka import KafkaContainer
+
+import pytest
+import yaml
 from kafka import KafkaConsumer, TopicPartition
-from pyspark.sql import SparkSession, DataFrame
 from pyspark.conf import SparkConf
+from pyspark.sql import DataFrame, SparkSession
+from testcontainers.kafka import KafkaContainer
+from testcontainers.postgres import PostgresContainer
 
-# from obsrv.common import ObsrvException
-from obsrv.job.batch import get_base_conf
+from obsrv.connector import ConnectorContext, MetricsCollector
 from obsrv.connector.batch import ISourceConnector, SourceConnector
-from obsrv.connector import ConnectorContext
-from obsrv.connector import MetricsCollector
-
-# from obsrv.models import ErrorData, StatusCode
-
-from tests.create_tables import create_tables
+from obsrv.job.batch import get_base_conf
 from tests.batch_setup import setup_obsrv_database
+from tests.create_tables import create_tables
 
 
 class TestSource(ISourceConnector):

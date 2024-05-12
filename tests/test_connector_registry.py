@@ -1,9 +1,10 @@
-import unittest
-import pytest
 import os
-import yaml
-from obsrv.connector.registry import ConnectorRegistry, ConnectorInstance
+import unittest
 
+import pytest
+import yaml
+
+from obsrv.connector.registry import ConnectorInstance, ConnectorRegistry
 from tests.batch_setup import setup_obsrv_database
 
 

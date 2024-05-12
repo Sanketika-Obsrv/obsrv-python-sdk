@@ -1,6 +1,7 @@
-import uuid
 import time
-from typing import List, Dict
+import uuid
+from typing import Dict, List
+
 from obsrv.models import EventID, Metric, MetricContext, MetricData
 
 

@@ -1,17 +1,17 @@
+import json
 import time
-from typing import Dict, Any, final, AnyStr, Iterator
-from pyspark.sql import SparkSession, DataFrame
+from abc import ABC, abstractmethod
+from typing import Any, AnyStr, Dict, Iterator, final
+
 from pyspark.conf import SparkConf
+from pyspark.sql import DataFrame, SparkSession
 
 from obsrv.common import ObsrvException
-from obsrv.models import ExecutionMetric, ErrorData
-from obsrv.utils import EncryptionUtil, Config, LoggerController
-from obsrv.connector import MetricsCollector, ConnectorInstance, ConnectorContext
-from obsrv.connector.registry import ConnectorRegistry
+from obsrv.connector import ConnectorContext, ConnectorInstance, MetricsCollector
 from obsrv.connector.batch.obsrv_dataset import ObsrvDataset
-
-from abc import ABC, abstractmethod
-import json
+from obsrv.connector.registry import ConnectorRegistry
+from obsrv.models import ErrorData, ExecutionMetric
+from obsrv.utils import Config, EncryptionUtil, LoggerController
 
 logger = LoggerController(__name__)
 
@@ -204,13 +204,13 @@ class SourceConnector:
 
     def get_metrics_schema():
         from pyspark.sql.types import (
-            StructType,
-            StructField,
-            StringType,
+            ArrayType,
+            DoubleType,
             LongType,
             MapType,
-            DoubleType,
-            ArrayType,
+            StringType,
+            StructField,
+            StructType,
         )
 
         schema = StructType(

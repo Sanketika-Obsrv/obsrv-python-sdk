@@ -1,7 +1,9 @@
-import yaml
-import os
-import psycopg2
 import json
+import os
+
+import psycopg2
+import yaml
+
 from obsrv.utils import EncryptionUtil
 
 

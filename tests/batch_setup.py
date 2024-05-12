@@ -1,8 +1,9 @@
 import os
+
 import pytest
-from testcontainers.postgres import PostgresContainer
-from testcontainers.kafka import KafkaContainer
 import yaml
+from testcontainers.kafka import KafkaContainer
+from testcontainers.postgres import PostgresContainer
 
 from tests.create_tables import create_tables
 

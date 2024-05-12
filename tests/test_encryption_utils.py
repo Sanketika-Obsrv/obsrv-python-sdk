@@ -1,4 +1,5 @@
 import unittest
+
 from obsrv.utils import EncryptionUtil
 
 
