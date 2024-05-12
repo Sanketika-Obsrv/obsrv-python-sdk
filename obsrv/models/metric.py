@@ -16,17 +16,17 @@ class Metric:
             "actor": self.actor,
             "context": self.context.to_json(),
             "object": self.object,
-            "edata": self.edata.to_json()
+            "edata": self.edata.to_json(),
         }
+
 
 class MetricContext:
     def __init__(self, pdata):
         self.pdata = pdata
 
     def to_json(self):
-        return {
-            "pdata": self.pdata
-        }
+        return {"pdata": self.pdata}
+
 
 class MetricData:
     def __init__(self, metric, labels):
@@ -34,13 +34,19 @@ class MetricData:
         self.labels = labels
 
     def to_json(self):
-        return {
-            "metric": self.metric,
-            "labels": self.labels
-        }
+        return {"metric": self.metric, "labels": self.labels}
+
 
 class ExecutionMetric:
-    def __init__(self, totalRecords, failedRecords, successRecords, connectorExecTime, frameworkExecTime, totalExecTime):
+    def __init__(
+        self,
+        totalRecords,
+        failedRecords,
+        successRecords,
+        connectorExecTime,
+        frameworkExecTime,
+        totalExecTime,
+    ):
         self.totalRecords = totalRecords
         self.failedRecords = failedRecords
         self.successRecords = successRecords
@@ -58,5 +64,5 @@ class ExecutionMetric:
             "success_records_count": self.successRecords,
             "total_exec_time_ms": self.totalExecTime,
             "connector_exec_time_ms": self.connectorExecTime,
-            "fw_exec_time_ms": self.frameworkExecTime
+            "fw_exec_time_ms": self.frameworkExecTime,
         }

@@ -1,6 +1,7 @@
 import json
 
-class JSONUtil: # pragma: no cover
+
+class JSONUtil:  # pragma: no cover
     @staticmethod
     def serialize(obj):
         if isinstance(obj, str):

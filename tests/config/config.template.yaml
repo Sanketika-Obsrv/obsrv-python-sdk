@@ -6,7 +6,7 @@ postgres:
   port: 5432
 
 kafka:
-  bootstrap-servers: localhost:9092
+  broker-servers: localhost:9092
   telemetry-topic: test.telemetry
   connector-metrics-topic: test.metrics
   producer:

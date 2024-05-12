@@ -1,6 +1,7 @@
 import psycopg2
 import psycopg2.extras
 
+
 class PostgresConnect:
     def __init__(self, config):
         self.config = config
@@ -13,8 +14,10 @@ class PostgresConnect:
         database = self.config.get("dbname")
         db_connection = psycopg2.connect(
             database=database,
-            host=db_host, port=db_port,
-            user=db_user, password=db_password
+            host=db_host,
+            port=db_port,
+            user=db_user,
+            password=db_password,
         )
         db_connection.autocommit = True
         return db_connection

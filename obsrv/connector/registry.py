@@ -16,8 +16,9 @@ class ConnectorContext:
     entry_topic: Optional[str] = None
     building_block: Optional[str] = None
     env: Optional[str] = None
-    state: Optional['ConnectorState'] = None
-    stats: Optional['ConnectorStats'] = None
+    state: Optional["ConnectorState"] = None
+    stats: Optional["ConnectorStats"] = None
+
 
 @dataclass
 class ConnectorInstance:
@@ -25,6 +26,7 @@ class ConnectorInstance:
     connector_config: str
     operations_config: str
     status: str
+
 
 class ConnectorState:
     def __init__(self, postgres_config, connector_instance_id, state_json=None):
@@ -49,9 +51,16 @@ class ConnectorState:
 
     # @staticmethod
     def save_state(self):
-        count = ConnectorRegistry.update_connector_state(self.connector_instance_id, self.postgres_config, self.to_json())
+        count = ConnectorRegistry.update_connector_state(
+            self.connector_instance_id, self.postgres_config, self.to_json()
+        )
         if count != 1:
-            raise ObsrvException(ErrorData("CONN_STATE_SAVE_FAILED", "Unable to save the connector state"))
+            raise ObsrvException(
+                ErrorData(
+                    "CONN_STATE_SAVE_FAILED", "Unable to save the connector state"
+                )
+            )
+
 
 class ConnectorStats:
     def __init__(self, postgres_config, connector_instance_id, stats_json=None):
@@ -72,9 +81,16 @@ class ConnectorStats:
         return json.dumps(self.stats, default=str)
 
     def save_stats(self):
-        upd_count = ConnectorRegistry.update_connector_stats(self.connector_instance_id, self.postgres_config, self.to_json())
+        upd_count = ConnectorRegistry.update_connector_stats(
+            self.connector_instance_id, self.postgres_config, self.to_json()
+        )
         if upd_count != 1:
-            raise ObsrvException(ErrorData("CONN_STATS_SAVE_FAILED", "Unable to save the connector stats"))
+            raise ObsrvException(
+                ErrorData(
+                    "CONN_STATS_SAVE_FAILED", "Unable to save the connector stats"
+                )
+            )
+
 
 class ConnectorRegistry:
     @staticmethod
@@ -85,7 +101,9 @@ class ConnectorRegistry:
             FROM connector_instances as ci
             JOIN datasets d ON ci.dataset_id = d.id
             WHERE ci.connector_id = '{}' AND d.status = 'Live' AND ci.status = 'Live'
-        """.format(connector_id)
+        """.format(
+            connector_id
+        )
         result = postgres_connect.execute_select_all(query)
         return [parse_connector_instance(row, postgres_config) for row in result]
 
@@ -97,7 +115,9 @@ class ConnectorRegistry:
             FROM connector_instances as ci
             JOIN datasets d ON ci.dataset_id = d.id
             WHERE ci.id = '{}' AND d.status = 'Live' AND ci.status = 'Live'
-        """.format(connector_instance_id)
+        """.format(
+            connector_instance_id
+        )
         result = postgres_connect.execute_select_one(query)
         return parse_connector_instance(result, postgres_config) if result else None
 
@@ -106,7 +126,9 @@ class ConnectorRegistry:
         postgres_connect = PostgresConnect(postgres_config)
         query = """
             UPDATE connector_instances SET connector_state = '{}' WHERE id = '{}'
-        """.format(state, connector_instance_id)
+        """.format(
+            state, connector_instance_id
+        )
         return postgres_connect.execute_upsert(query)
 
     @staticmethod
@@ -114,22 +136,25 @@ class ConnectorRegistry:
         postgres_connect = PostgresConnect(postgres_config)
         query = """
             UPDATE connector_instances SET connector_stats = '{}' WHERE id = '{}'
-        """.format(stats, connector_instance_id)
+        """.format(
+            stats, connector_instance_id
+        )
         return postgres_connect.execute_upsert(query)
 
+
 def parse_connector_instance(rs, postgres_config) -> ConnectorInstance:
-    id = rs['id']
-    dataset_id = rs['dataset_id']
-    connector_id = rs['connector_id']
-    connector_type = rs['connector_type']
-    connector_config = rs['connector_config']
-    # data_format = connector_config['fileFormat']['type']
-    operations_config = rs['operations_config']
-    status = rs['status']
-    dataset_config = rs['dataset_config']
-    connector_state = rs.get('connector_state', {})
-    connector_stats = rs.get('connector_stats', {})
-    entry_topic = dataset_config.get('entry_topic', 'dev.ingest')
+    id = rs["id"]
+    dataset_id = rs["dataset_id"]
+    connector_id = rs["connector_id"]
+    connector_type = rs["connector_type"]
+    connector_config = rs["connector_config"]
+    data_format = rs["data_format"]
+    operations_config = rs["operations_config"]
+    status = rs["status"]
+    dataset_config = rs["dataset_config"]
+    connector_state = rs.get("connector_state", {})
+    connector_stats = rs.get("connector_stats", {})
+    entry_topic = dataset_config.get("entry_topic", "dev.ingest")
 
     return ConnectorInstance(
         connector_context=ConnectorContext(
@@ -137,12 +162,12 @@ def parse_connector_instance(rs, postgres_config) -> ConnectorInstance:
             dataset_id=dataset_id,
             connector_instance_id=id,
             connector_type=connector_type,
-            # data_format=data_format,
+            data_format=data_format,
             entry_topic=entry_topic,
-            state = ConnectorState(postgres_config, id, connector_state),
-            stats = ConnectorStats(postgres_config, id, connector_stats)
+            state=ConnectorState(postgres_config, id, connector_state),
+            stats=ConnectorStats(postgres_config, id, connector_stats),
         ),
         connector_config=connector_config,
         operations_config=operations_config,
-        status=status
+        status=status,
     )

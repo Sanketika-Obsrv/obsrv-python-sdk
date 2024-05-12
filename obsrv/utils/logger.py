@@ -1,6 +1,7 @@
 import logging
 from sys import stdout
 
+
 class LoggerController(logging.Logger):
     def __init__(self, name):
         super().__init__(name)

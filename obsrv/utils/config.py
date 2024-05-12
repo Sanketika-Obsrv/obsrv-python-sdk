@@ -6,6 +6,7 @@ from .logger import LoggerController
 
 logger = LoggerController(__name__)
 
+
 class Config:
     def __init__(self, config_file_path):
         with open(config_file_path) as config_file:

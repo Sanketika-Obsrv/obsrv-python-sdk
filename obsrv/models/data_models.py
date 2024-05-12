@@ -1,10 +1,13 @@
 from enum import Enum
 from dataclasses import dataclass
+
 # from typing import Optional, Dict, Any
+
 
 class EventID(Enum):
     LOG = "LOG"
     METRIC = "METRIC"
+
 
 class StatusCode(Enum):
     SUCCESS = "success"
@@ -15,6 +18,7 @@ class StatusCode(Enum):
 class ErrorData:
     error_code: str
     error_msg: str
+
 
 # @dataclass
 # class ContextData:
