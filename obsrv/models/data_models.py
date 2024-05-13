@@ -19,6 +19,10 @@ class ErrorData:
     error_code: str
     error_msg: str
 
+class ExecutionState(Enum):
+    RUNNING = "running"
+    NOT_RUNNING = "not_running"
+    QUEUED = "queued"
 
 # @dataclass
 # class ContextData:

@@ -13,7 +13,7 @@ class ConnectorContext:
     dataset_id: str
     connector_instance_id: str
     connector_type: str
-    # data_format: str
+    data_format: str
     entry_topic: Optional[str] = None
     building_block: Optional[str] = None
     env: Optional[str] = None
