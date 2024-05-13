@@ -98,9 +98,10 @@ class ConnectorRegistry:
     def get_connector_instances(connector_id, postgres_config):
         postgres_connect = PostgresConnect(postgres_config)
         query = """
-            SELECT ci.*, d.dataset_config
+            SELECT ci.*, d.dataset_config, cr.connector_type
             FROM connector_instances as ci
             JOIN datasets d ON ci.dataset_id = d.id
+            JOIN connector_registry cr on ci.connector_id = cr.id
             WHERE ci.connector_id = '{}' AND d.status = 'Live' AND ci.status = 'Live'
         """.format(
             connector_id
@@ -112,9 +113,10 @@ class ConnectorRegistry:
     def get_connector_instance(connector_instance_id, postgres_config):
         postgres_connect = PostgresConnect(postgres_config)
         query = """
-            SELECT ci.*, d.dataset_config
+            SELECT ci.*, d.dataset_config, cr.connector_type
             FROM connector_instances as ci
             JOIN datasets d ON ci.dataset_id = d.id
+            JOIN connector_registry cr on ci.connector_id = cr.id
             WHERE ci.id = '{}' AND d.status = 'Live' AND ci.status = 'Live'
         """.format(
             connector_instance_id
