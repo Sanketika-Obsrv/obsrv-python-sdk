@@ -58,6 +58,7 @@ def create_tables(config):
             id TEXT PRIMARY KEY,
             dataset_id TEXT NOT NULL REFERENCES datasets (id),
             connector_id TEXT NOT NULL REFERENCES connector_registry (id),
+            data_format TEXT NOT NULL DEFAULT 'jsonl',
             connector_type TEXT NOT NULL,
             connector_config json NOT NULL,
             operations_config json NOT NULL,
@@ -93,10 +94,7 @@ def create_tables(config):
     """
 
     connector_config = json.dumps({"type": "local"})
-    enc_config = {
-        "is_encrypted": True,
-        "connector_config": enc.encrypt(connector_config),
-    }
+    enc_config = enc.encrypt(connector_config)
 
     ins_ci = """
         INSERT INTO connector_instances (id, dataset_id, connector_id, connector_type, connector_config, operations_config, status, connector_state, connector_stats, created_by, updated_by, created_date, updated_date, published_date) VALUES
