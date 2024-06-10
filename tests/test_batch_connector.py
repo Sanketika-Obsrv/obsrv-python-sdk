@@ -1,6 +1,6 @@
 import os
 import unittest
-from typing import Any, Dict
+from typing import Any, Dict, Iterator
 
 import pytest
 import yaml
@@ -21,12 +21,11 @@ class TestSource(ISourceConnector):
         ctx: ConnectorContext,
         connector_config: Dict[Any, Any],
         metrics_collector: MetricsCollector,
-    ) -> DataFrame:
+    ) -> Iterator[DataFrame]:
         df = sc.read.format("json").load("tests/sample_data/nyt_data_100.json.gz")
         yield df
 
         df1 = sc.read.format("json").load("tests/sample_data/nyt_data_100.json")
-
         yield df1
 
     def get_spark_conf(self, connector_config) -> SparkConf:

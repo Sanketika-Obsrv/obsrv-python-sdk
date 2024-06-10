@@ -1,7 +1,8 @@
+import argparse
 import json
 import time
 from abc import ABC, abstractmethod
-from typing import Any, AnyStr, Dict, final
+from typing import Any, Dict, final
 
 from pyspark.conf import SparkConf
 from pyspark.sql import DataFrame, SparkSession
@@ -129,11 +130,29 @@ class SourceConnector:
         return (valid_records_count, failed_records_count, end_time - start_time)
 
     @final
-    def process(connector: ISourceConnector, config_file_path: AnyStr, **kwargs):
+    def process(connector: ISourceConnector, **kwargs):
+        args = SourceConnector.parse_args()
+
+        config_file_path = (
+            args.config_file_path
+            if args.config_file_path
+            else kwargs.get("config_file_path", None)
+        )
+
+        if config_file_path is None:
+            raise Exception("Config file path not found")
 
         start_time = time.time()
         config = Config(config_file_path)
-        connector_instance_id = config.find("connector_instance_id")
+        connector_instance_id = (
+            args.connector_instance_id
+            if args.connector_instance_id
+            else config.find("connector_instance_id", None)
+        )
+
+        if connector_instance_id is None:
+            raise Exception("Connector instance id not found")
+
         connector_instance = SourceConnector.get_connector_instance(
             connector_instance_id, config.find("postgres")
         )
@@ -251,3 +270,26 @@ class SourceConnector:
         )
 
         return schema
+
+    @final
+    def parse_args():
+        parser = argparse.ArgumentParser()
+        parser.add_argument(
+            "-f",
+            "--config-file-path",
+            help="Path to the config file containing the default connector configurations",
+        )
+
+        parser.add_argument(
+            "-c",
+            "--connector-instance-id",
+            help="connector instance id",
+        )
+
+        parser.add_argument(
+            "--connector.metadata.id",
+            help="connector id",
+        )
+
+        args = parser.parse_args()
+        return args
