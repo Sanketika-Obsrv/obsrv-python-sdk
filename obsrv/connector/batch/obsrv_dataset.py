@@ -3,7 +3,7 @@ import time
 
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import from_json, length, lit, struct, to_json
-from pyspark.sql.types import StringType, StructField, StructType
+from pyspark.sql.types import StringType, StructField, StructType, LongType
 
 from obsrv.utils import LoggerController
 
@@ -43,10 +43,10 @@ class ObsrvDataset:
 
         obsrv_meta_schema = StructType(
             [
-                StructField("syncts", StringType(), True),
-                StructField("flags", StringType(), True),
-                StructField("timespans", StringType(), True),
-                StructField("error", StringType(), True),
+                StructField("syncts", LongType(), True),
+                StructField("flags", StructType(), True),
+                StructField("timespans", StructType(), True),
+                StructField("error", StructType(), True),
                 StructField("source", StructType(source_meta), True),
             ]
         )
