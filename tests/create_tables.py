@@ -58,7 +58,6 @@ def create_tables(config):
             id TEXT PRIMARY KEY,
             dataset_id TEXT NOT NULL REFERENCES datasets (id),
             connector_id TEXT NOT NULL REFERENCES connector_registry (id),
-            data_format TEXT NOT NULL DEFAULT 'jsonl',
             connector_type TEXT NOT NULL,
             connector_config json NOT NULL,
             operations_config json NOT NULL,

@@ -13,7 +13,6 @@ class ConnectorContext:
     dataset_id: str
     connector_instance_id: str
     connector_type: str
-    data_format: str
     entry_topic: Optional[str] = None
     building_block: Optional[str] = None
     env: Optional[str] = None
@@ -151,7 +150,6 @@ def parse_connector_instance(rs, postgres_config) -> ConnectorInstance:
     connector_id = rs["connector_id"]
     connector_type = rs["type"]
     connector_config = rs["connector_config"]
-    data_format = rs["data_format"]
     operations_config = rs["operations_config"]
     status = rs["status"]
     dataset_config = rs["dataset_config"]
@@ -165,7 +163,6 @@ def parse_connector_instance(rs, postgres_config) -> ConnectorInstance:
             dataset_id=dataset_id,
             connector_instance_id=id,
             connector_type=connector_type,
-            data_format=data_format,
             entry_topic=entry_topic,
             state=ConnectorState(postgres_config, id, connector_state),
             stats=ConnectorStats(postgres_config, id, connector_stats),
