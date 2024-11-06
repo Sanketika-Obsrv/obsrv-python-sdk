@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "obsrv"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Ravi Mula <ravismula@users.noreply.github.com>"]
 readme = "README.md"
@@ -15,7 +15,7 @@ kafka-python-ng = "^2.2.2"
 
 # A list of all of the optional dependencies, some of which are included in the
 # below `extras`. They can be opted into by apps.
-pyspark = { version = "^3.5.1", optional = true }
+pyspark = { version = "3.5.1", optional = true }
 
 [tool.poetry.extras]
 batch = ["pyspark"]
@@ -23,7 +23,7 @@ batch = ["pyspark"]
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
 coverage = "^7.4.3"
-pyspark = "^3.5.1"
+pyspark = "3.5.1"
 testcontainers = {extras = ["kafka", "postgres"], version = "^4.4.0"}
 black = "^24.4.2"
 isort = "^5.13.2"
