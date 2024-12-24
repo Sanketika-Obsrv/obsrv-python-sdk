@@ -112,7 +112,7 @@ class ConnectorRegistry:
     def get_connector_instance(connector_instance_id, postgres_config):
         postgres_connect = PostgresConnect(postgres_config)
         query = """
-            SELECT ci.*, d.dataset_config, cr.type
+            SELECT ci.*, cr.type, d.entry_topic
             FROM connector_instances as ci
             JOIN datasets d ON ci.dataset_id = d.id
             JOIN connector_registry cr on ci.connector_id = cr.id
@@ -152,10 +152,9 @@ def parse_connector_instance(rs, postgres_config) -> ConnectorInstance:
     connector_config = rs["connector_config"]
     operations_config = rs["operations_config"]
     status = rs["status"]
-    dataset_config = rs["dataset_config"]
     connector_state = rs.get("connector_state", {})
     connector_stats = rs.get("connector_stats", {})
-    entry_topic = dataset_config.get("entry_topic", "dev.ingest")
+    entry_topic = rs.get("entry_topic", "ingest")
 
     return ConnectorInstance(
         connector_context=ConnectorContext(
