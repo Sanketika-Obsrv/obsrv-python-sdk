@@ -191,9 +191,7 @@ class SourceConnector:
                 failedRecords=execution_metric.failedRecords,
                 successRecords=execution_metric.successRecords,
                 connectorExecTime=end_time - connector_processing_start,
-                frameworkExecTime=execution_metric.frameworkExecTime
-                + end_time
-                - start_time,
+                frameworkExecTime=execution_metric.frameworkExecTime,
                 totalExecTime=end_time - start_time,
             )
             metrics_collector.collect(metric=metric_event.to_json())
