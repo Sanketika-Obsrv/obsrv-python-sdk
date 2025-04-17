@@ -20,8 +20,8 @@ logger = LoggerController(__name__)
 class ISourceConnector(ABC):
 
     @final
-    def execute(self, ctx, connector_config, sc, metrics_collector) -> Any:
-        results = self.process(sc, ctx, connector_config, metrics_collector)
+    def execute(self, ctx, ops_config, connector_config, sc, metrics_collector) -> Any:
+        results = self.process(sc, ctx, ops_config, connector_config, metrics_collector)
 
         return results
 
@@ -30,7 +30,7 @@ class ISourceConnector(ABC):
         pass
 
     @abstractmethod
-    def process(self, sc, ctx, connector_config) -> Any:
+    def process(self, sc, ctx, ops_config, connector_config, metrics_collector) -> Any:
         pass
 
 
@@ -47,6 +47,10 @@ class SourceConnector:
     @final
     def get_connector_config(connector_instance: ConnectorInstance) -> Dict[Any, Any]:
         return connector_instance.connector_config
+    
+    @final
+    def get_ops_config(connector_instance: ConnectorInstance) -> Dict[Any, Any]:
+        return connector_instance.operations_config
 
     @final
     def get_additional_config(spark_conf: SparkConf) -> SparkConf:
@@ -79,6 +83,7 @@ class SourceConnector:
     def process_connector(
         connector: ISourceConnector,
         ctx: ConnectorContext,
+        ops_config: Dict[Any, Any],
         connector_config: Dict[Any, Any],
         config: Dict[Any, Any],
         sc: SparkSession,
@@ -87,6 +92,7 @@ class SourceConnector:
         valid_records, failed_records, framework_exec_time = 0, 0, 0
         results = connector.execute(
             ctx=ctx,
+            ops_config=ops_config,
             connector_config=connector_config,
             sc=sc,
             metrics_collector=metrics_collector,
@@ -165,6 +171,7 @@ class SourceConnector:
         ctx.building_block = config.find("building-block", None)
         ctx.env = config.find("env", None)
         connector_config = SourceConnector.get_connector_config(connector_instance)
+        ops_config = SourceConnector.get_ops_config(connector_instance)
         # if 'is_encrypted' in connector_config and connector_config['is_encrypted']:
         encryption_util = EncryptionUtil(config.find("obsrv_encryption_key"))
         connector_config = json.loads(encryption_util.decrypt(connector_config))
@@ -179,6 +186,7 @@ class SourceConnector:
             execution_metric = SourceConnector.process_connector(
                 connector=connector,
                 ctx=ctx,
+                ops_config=ops_config,
                 connector_config=connector_config,
                 config=config,
                 sc=sc,
@@ -290,4 +298,7 @@ class SourceConnector:
         )
 
         args = parser.parse_args()
+        # Below allows to allow args that may be for testing
+        # ie. -s, -v
+        # args, unknown = parser.parse_known_args()
         return args
