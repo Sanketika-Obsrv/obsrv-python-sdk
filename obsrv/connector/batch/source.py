@@ -298,7 +298,7 @@ class SourceConnector:
         )
 
         args = parser.parse_args()
-        # Below allows to allow args that may be for testing
+        # Below allows args that may be for testing
         # ie. -s, -v
         # args, unknown = parser.parse_known_args()
         return args
