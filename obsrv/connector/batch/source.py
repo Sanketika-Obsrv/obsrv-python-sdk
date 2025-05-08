@@ -83,19 +83,19 @@ class SourceConnector:
     def process_connector(
         connector: ISourceConnector,
         ctx: ConnectorContext,
-        ops_config: Dict[Any, Any],
         connector_config: Dict[Any, Any],
         config: Dict[Any, Any],
         sc: SparkSession,
         metrics_collector: MetricsCollector,
+        ops_config: Dict[Any, Any],
     ) -> ExecutionMetric:
         valid_records, failed_records, framework_exec_time = 0, 0, 0
         results = connector.execute(
             ctx=ctx,
-            ops_config=ops_config,
             connector_config=connector_config,
             sc=sc,
             metrics_collector=metrics_collector,
+            ops_config=ops_config,
         )
 
         if isinstance(results, DataFrame):
@@ -186,11 +186,11 @@ class SourceConnector:
             execution_metric = SourceConnector.process_connector(
                 connector=connector,
                 ctx=ctx,
-                ops_config=ops_config,
                 connector_config=connector_config,
                 config=config,
                 sc=sc,
                 metrics_collector=metrics_collector,
+                ops_config=ops_config,
             )
             end_time = time.time()
 
