@@ -20,8 +20,8 @@ logger = LoggerController(__name__)
 class ISourceConnector(ABC):
 
     @final
-    def execute(self, ctx, connector_config, sc, metrics_collector) -> Any:
-        results = self.process(sc, ctx, connector_config, metrics_collector)
+    def execute(self, ctx, sc, connector_config, operations_config, metrics_collector) -> Any:
+        results = self.process(sc, ctx, connector_config, operations_config, metrics_collector)
 
         return results
 
@@ -30,7 +30,7 @@ class ISourceConnector(ABC):
         pass
 
     @abstractmethod
-    def process(self, sc, ctx, connector_config) -> Any:
+    def process(self, sc, ctx, connector_config, operations_config, metrics_collector) -> Any:
         pass
 
 
@@ -47,6 +47,10 @@ class SourceConnector:
     @final
     def get_connector_config(connector_instance: ConnectorInstance) -> Dict[Any, Any]:
         return connector_instance.connector_config
+
+    @final
+    def get_operations_config(connector_instance: ConnectorInstance) -> Dict[Any, Any]:
+        return connector_instance.operations_config
 
     @final
     def get_additional_config(spark_conf: SparkConf) -> SparkConf:
@@ -83,12 +87,14 @@ class SourceConnector:
         config: Dict[Any, Any],
         sc: SparkSession,
         metrics_collector: MetricsCollector,
+        operations_config: Dict[Any, Any],
     ) -> ExecutionMetric:
         valid_records, failed_records, framework_exec_time = 0, 0, 0
         results = connector.execute(
             ctx=ctx,
-            connector_config=connector_config,
             sc=sc,
+            connector_config=connector_config,
+            operations_config=operations_config,
             metrics_collector=metrics_collector,
         )
 
@@ -116,6 +122,7 @@ class SourceConnector:
     def process_result(result, ctx, config):
         start_time = time.time()
         dataset = ObsrvDataset(result)
+        dataset.to_event(ctx)
         dataset.append_obsrv_meta(ctx)
 
         dataset.filter_events(ctx, config)
@@ -165,6 +172,7 @@ class SourceConnector:
         ctx.building_block = config.find("building-block", None)
         ctx.env = config.find("env", None)
         connector_config = SourceConnector.get_connector_config(connector_instance)
+        operations_config = SourceConnector.get_operations_config(connector_instance)
         # if 'is_encrypted' in connector_config and connector_config['is_encrypted']:
         encryption_util = EncryptionUtil(config.find("obsrv_encryption_key"))
         connector_config = json.loads(encryption_util.decrypt(connector_config))
@@ -183,6 +191,7 @@ class SourceConnector:
                 config=config,
                 sc=sc,
                 metrics_collector=metrics_collector,
+                operations_config=operations_config,
             )
             end_time = time.time()
 
