@@ -26,6 +26,13 @@ class ObsrvDataset:
             self.ds._obsrv_tmp_size <= max_event_size
         ).drop("_obsrv_tmp_size")
 
+    def to_event(self, ctx):
+        columns = self.ds.columns
+        ds = self.ds.withColumn("event", struct(*columns))
+        ds = ds.drop(*columns)
+        ds = ds.withColumn("dataset", lit(ctx.dataset_id))
+        self.ds = ds
+
     def append_obsrv_meta(self, ctx):
         addn_meta = False
 
@@ -33,13 +40,13 @@ class ObsrvDataset:
             StructField("connector", StringType(), True),
             StructField("connectorInstance", StringType(), True),
         ]
-        if "_addn_source_meta" in self.ds.columns:
-            addn_meta = True
-            source_meta.append(StructField("_addn_source_meta", StringType(), True))
-            addn_meta_data = (
-                self.ds.select("_addn_source_meta").collect()[0][0].replace('"', "'")
-            )
-            self.ds = self.ds.drop("_addn_source_meta")
+        # if "_addn_source_meta" in self.ds.columns:
+        #     addn_meta = True
+        #     source_meta.append(StructField("_addn_source_meta", StringType(), True))
+        #     addn_meta_data = (
+        #         self.ds.select("_addn_source_meta").collect()[0][0].replace('"', "'")
+        #     )
+        #     self.ds = self.ds.drop("_addn_source_meta")
 
         obsrv_meta_schema = StructType(
             [

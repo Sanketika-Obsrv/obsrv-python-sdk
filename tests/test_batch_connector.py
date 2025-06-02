@@ -20,6 +20,7 @@ class TestSource(ISourceConnector):
         sc: SparkSession,
         ctx: ConnectorContext,
         connector_config: Dict[Any, Any],
+        operations_config: Dict[Any, Any],
         metrics_collector: MetricsCollector,
     ) -> Iterator[DataFrame]:
         df = sc.read.format("json").load("tests/sample_data/nyt_data_100.json.gz")
