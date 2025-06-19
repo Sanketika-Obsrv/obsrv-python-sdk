@@ -71,7 +71,7 @@ class SourceConnector:
         spark_conf = SourceConnector.get_additional_config(spark_conf)
         try:
             sc = (
-                SparkSession.builder.appName(ctx.connector_id)
+                SparkSession.builder.appName(ctx.connector_instance_id)
                 .config(conf=spark_conf)
                 .getOrCreate()
             )
@@ -128,10 +128,9 @@ class SourceConnector:
         dataset.filter_events(ctx, config)
         failed_events = dataset.invalid_events
         valid_events = dataset.valid_events
+        dataset.save_to_kafka(config, ctx.entry_topic)
         failed_records_count = failed_events.count()
         valid_records_count = valid_events.count()
-
-        dataset.save_to_kafka(config, ctx.entry_topic)
         end_time = time.time()
 
         return (valid_records_count, failed_records_count, end_time - start_time)
@@ -154,7 +153,7 @@ class SourceConnector:
         connector_instance_id = (
             args.connector_instance_id
             if args.connector_instance_id
-            else config.find("connector_instance_id", None)
+            else kwargs.get("connector_instance_id", None)
         )
 
         if connector_instance_id is None:
@@ -298,5 +297,5 @@ class SourceConnector:
             help="connector id",
         )
 
-        args = parser.parse_args()
+        args, unknown = parser.parse_known_args()
         return args

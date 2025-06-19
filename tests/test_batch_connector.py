@@ -61,7 +61,7 @@ class TestBatchConnector(unittest.TestCase):
 
         # kafka_consumer.seek_to_beginning()
 
-        SourceConnector.process(connector=connector, config_file_path=config_file_path)
+        SourceConnector.process(connector=connector, config_file_path=config_file_path, connector_instance_id="test.new-york-taxi-data.1")
 
         # metrics = []
         # all_messages = kafka_consumer.poll(timeout_ms=10000)
